@@ -1,0 +1,58 @@
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  text {
+    user-select: none;
+  }
+
+  .ball,
+  .personBBox {
+    fill: transparent;
+    
+    rect {
+      stroke: #17a2b8;
+      stroke-width: 1px;
+    }
+
+    text {
+      font-size: 12px;
+      fill: lightcyan;
+    }
+
+    &.active {
+      rect {
+        stroke: #17a2b8;
+        stroke-width: 3px;
+      }
+    }
+  }
+
+  .caption {
+    display: flex;
+    justify-content: center;
+    line-height: 1.25;
+    height: 100%;
+    align-items: flex-end;
+
+    .transcript {
+      background-color: rgba(27, 13, 13, 0.8);
+      color: #fff;
+      padding: 8px;
+      font-size: 2rem;
+      width: 80%;
+      text-align: center;
+
+      .entity {
+        color: skyblue;
+      }
+
+      .cover {
+        text-decoration: underline #c1c1c1;
+      }
+    }
+  }
+}
