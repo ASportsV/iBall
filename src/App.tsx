@@ -72,20 +72,23 @@ export class App extends React.Component<{}, State> {
     const videos = await Promise.all(params.VIDEO_IDS.map(async (videoId: string) => {
 
       try {
-        const { max_frame: maxFrame, start_frame = 0 } = await fetch(`assets/${params.GAME_ID}/${videoId}/frames/max_frame.json`).then(r => r.json())
-        const isTransit = videoId.endsWith('t')
+        // const { max_frame: maxFrame, start_frame = 0 } = await fetch(`assets/${params.GAME_ID}/${videoId}/frames/max_frame.json`).then(r => r.json())
+        // const isTransit = videoId.endsWith('t')
+
+        const { max_frame: maxFrame, start_frame = 0, fps, h, w, version } = (await fetch(`assets/${params.GAME_ID}/${videoId}/${videoId}-meta.json`).then(r => r.json()))
+        const isTransit = videoId.endsWith(',t')
 
         return {
+          gameId: params.GAME_ID,
           id: videoId as VideoID,
-          gameId: params.GAME_ID, 
           maxFrame, 
+          startFame: start_frame,
           isTransit,
-          frameRate: params.GAME_ID === 'game1' ? 29.97 : 29.81,
+          frameRate: fps, //params.GAME_ID === 'game1' ? 29.97 : 29.81,
           loaded: false,
-          width: 1280,
-          height: 720,
-          version: 1,
-          startFame: start_frame
+          width: w,
+          height: h,
+          version,
         }
       } catch (e) {
         console.log('Something wrong with maxjson', videoId)
