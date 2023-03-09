@@ -1,4 +1,6 @@
 
+import type { GameID, PlayerID, VideoID } from '@types';
+
 import { loadFramesFromDBToMem, Database } from 'common/DataLoader'
 import { postProcessing, IBallTables } from './loadData'
 
@@ -14,7 +16,7 @@ onmessage = async (e) => {
 
   switch (e.data[0]) {
     case 'Frames':
-      let frames = await loadFramesFromDBToMem(e.data[1], db)
+      let frames = await loadFramesFromDBToMem<GameID, VideoID, PlayerID>(e.data[1], db)
       if (frames) {
         frames = await postProcessing(e.data[1], frames, db)
       }

@@ -1,7 +1,7 @@
 import { scaleSequential, scaleSqrt, scaleOrdinal } from 'd3-scale'
 import { interpolateReds, interpolateYlGnBu, schemeSet3 } from 'd3-scale-chromatic'
 
-import type { Ball, Player, Point } from 'common/@types'
+import type { Ball, Point } from 'common/@types'
 import {
   PlayerID, TeamID,
   Attentions, AttentionWeights,
@@ -12,7 +12,7 @@ import {
   Lv2PlayerType,
   OffensivePkg,
   VideoID,
-  GameID,
+  GameID, Player
 } from "@types"
 
 import { distPoints, union } from 'common/@utils';
@@ -34,7 +34,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   // shotRecords: ShotRecord[] = []
 
   // gaze events
-  onGaze?: (p: Gaze, player?: Player<PlayerID>[]) => void
+  onGaze?: (p: Gaze, player?: Player[]) => void
   onUpdateLvInt?: (att: Attentions) => void
   onUpdateLvSync?: (sync: boolean, hilights: Highlights) => void
 
@@ -160,7 +160,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   }
 
   #playerAttentions: Attentions = { lastTs: -1, fIdx: -1, videoId: undefined, players: {} }
-  updateInteLv(gaze: Gaze, attendPlayers?: Player<PlayerID>[]) {
+  updateInteLv(gaze: Gaze, attendPlayers?: Player[]) {
     const { ts, fIdx } = gaze
     const { lastTs, players } = this.#playerAttentions
     const T = 1000 // ms
@@ -249,13 +249,13 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
     }
   }
 
-  getEmptyPlayer(players?: Player<PlayerID>[], ballHolderId?: PlayerID | null, teamWithBall?: TeamID) {
+  getEmptyPlayer(players?: Player[], ballHolderId?: PlayerID | null, teamWithBall?: TeamID) {
     if (players === undefined || teamWithBall === undefined) return
     const trackedPlayers = players.filter(({ tracking }) => tracking.x !== undefined && tracking.y !== undefined)
     const defenders = trackedPlayers.filter(p => PLAYER_META[p.id].team !== teamWithBall)
     const offensors = trackedPlayers.filter(p => PLAYER_META[p.id].team === teamWithBall)
 
-    const emptyOffensors: Array<[Player<PlayerID>, number]> = []
+    const emptyOffensors: Array<[Player, number]> = []
     for (const p of offensors) {
       const { dataPkg, id } = p
       if (id === ballHolderId) continue
@@ -471,10 +471,4 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
     regionExp: scaleSequential<string>(interpolateReds)
       .domain([0.1, params.GAME_ID === 'game1' ? 2 : 2.5])
   } as const
-
-  // #playerBins: Partial<Record<PlayerId, PlayerShotBin[]>> = {}
-  // getPlayerBins = (playerId: PlayerId) => this.#playerBins[playerId]
-  // async loadBins() {
-  //   this.#playerBins = await worker.getBins();
-  // }
 }

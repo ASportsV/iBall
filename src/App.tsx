@@ -5,18 +5,19 @@ import LoadingBar from 'react-top-loading-bar'
 import { IoPlaySharp, IoPauseSharp } from 'react-icons/io5'
 import { AiOutlineLoading } from 'react-icons/ai'
 
-import type { Player, Video } from 'common/@types'
-import { Attentions, GameID, Gaze, KeyPlayer, Lv2Player, PlayerID, VideoID } from '@types'
+import type { 
+  Attentions, GameID, Gaze, KeyPlayer, Lv2Player, 
+  PlayerID, Player,
+  VideoID, Video
+} from '@types'
 
 import { DEBUG } from 'common/@const'
 import { standardDeviation, globalFIdxToLocal, localFIdxToGlobalFIdx } from "common/@utils";
 
 import {
-  BarChart, LineChart,
-  // Court, 
-  // Timeline, 
+  BarChart, 
+  LineChart,
   Visualizer,
-  // Overlay 
 } from './components'
 import { Timeline } from 'common/@components'
 
@@ -26,17 +27,14 @@ import { IBallVideoEnv } from "VideoEnv";
 export const videoEnv = new IBallVideoEnv()
 
 interface State {
-  videoWidth: number
-  videoHeight: number
-
-  videos: Video<GameID, VideoID>[]
+  videos: Video[]
   pauseLoading: VideoID | undefined
   currentVideoIdx: number
   currentFrameIdx: number
   currentGaze: Gaze | undefined
   currentFrame?: HTMLVideoElement
   // player status
-  gazePlayers?: Player<PlayerID>[]
+  gazePlayers?: Player[]
   attentions?: Attentions
   attentionsOverTime?: Attentions[]
   pickedPlayers: Record<number, { lv1Players: Record<PlayerID, KeyPlayer>, lv2Players: Record<PlayerID, Lv2Player> }>
@@ -47,9 +45,6 @@ interface State {
 export class App extends React.Component<{}, State> {
 
   state: State = {
-    // video meta
-    videoWidth: 1280,
-    videoHeight: 720,
     // playing
     pauseLoading: undefined,
     videos: [],
@@ -209,7 +204,6 @@ export class App extends React.Component<{}, State> {
       // sync,
       playing,
       videos,
-      videoWidth, videoHeight,
     } = this.state;
 
     return (
@@ -223,8 +217,6 @@ export class App extends React.Component<{}, State> {
         <div className="up">
           <div className="full">
             <Visualizer ref={this.#visualizer}
-              width={videoWidth ?? 0}
-              height={videoHeight ?? 0}
               // video
               currentVideo={this.currentVideo}
               currentFrameIdx={currentFrameIdx}

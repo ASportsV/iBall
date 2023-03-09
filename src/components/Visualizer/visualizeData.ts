@@ -1,8 +1,8 @@
-import { Player, Point } from 'common/@types'
+import { Point } from 'common/@types'
 import { getAngle } from "common/@utils";
 
 import { PLAYER_META, COLORS, FOCUS, LV_INTEREST_THRESHOLD } from "@const";
-import { PlayerID, KeyPlayer, KeyPlayerType, Lv2Player, Lv2PlayerType,  } from "@types";
+import { PlayerID, KeyPlayer, KeyPlayerType, Lv2Player, Lv2PlayerType, Player } from "@types";
 
 import * as draw from './draw'
 
@@ -238,9 +238,9 @@ const internalCtx = internalCanvas.getContext('2d')!
 function drawHL(ctx: CanvasRenderingContext2D, 
   frame: CanvasImageSource, 
   mask: CanvasImageSource,
-  players: Player<PlayerID>[],
-  lv1Players: Array<Player<PlayerID> & KeyPlayer> = [],
-  lv2Players: Array<Player<PlayerID> & Lv2Player> = [],
+  players: Player[],
+  lv1Players: Array<Player & KeyPlayer> = [],
+  lv2Players: Array<Player & Lv2Player> = [],
   ballHolder?: PlayerID | null,
   focus?: { pos: Point }) {
   const { width, height } = ctx.canvas
@@ -450,7 +450,7 @@ function drawIcon(ctx: CanvasRenderingContext2D, iconHeight: number, offset: [nu
   }
 }
 
-function drawName(ctx: CanvasRenderingContext2D, player?: Player<PlayerID>) {
+function drawName(ctx: CanvasRenderingContext2D, player?: Player) {
   if (!player) return
 
   const { id, namePos } = player

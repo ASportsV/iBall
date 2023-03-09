@@ -6,10 +6,12 @@ import { distPoints, extent, getAngle } from "common/@utils";
 
 import { PLAYER_META } from "@const";
 
-import { Player, Video, CacheFrameData, Point } from "common/@types";
+import { CacheFrameData, Point } from "common/@types";
 import {
-  PlayerID, TeamID, CachePlayerBin, DefenseRecord,
-  DefensivePkg, OffensivePkg, PLAYER_STATUS, PlayerShotBin, ShotRecord, GameID, VideoID
+  PlayerID, TeamID, 
+  Player, Video,
+  CachePlayerBin, DefenseRecord,
+  DefensivePkg, OffensivePkg, PLAYER_STATUS, PlayerShotBin, ShotRecord
 } from "@types";
 
 import { Database } from 'common/DataLoader'
@@ -19,7 +21,7 @@ export interface IBallTables {
   defenseRecords: DefenseRecord
 }
 
-export async function postProcessing({ gameId }: Video<GameID, VideoID>, frames: CacheFrameData<PlayerID>[], db: Database<IBallTables>) {
+export async function postProcessing({ gameId }: Video, frames: CacheFrameData<PlayerID>[], db: Database<IBallTables>) {
   const playerBins = await loadBins(db)
   const dfRecords = await loadDFRecord(db)
   // link frames
@@ -139,7 +141,7 @@ export async function postProcessing({ gameId }: Video<GameID, VideoID>, frames:
 }
 
 
-function getSmoothFrames(player: Player<PlayerID> & { nextFrame?: Player<PlayerID>, preFrame?: Player<PlayerID> }, smoothSteps: number) {
+function getSmoothFrames(player: Player & { nextFrame?: Player, preFrame?: Player }, smoothSteps: number) {
   return [
     ...Array(smoothSteps).fill(0)
       // iterate to the frame
@@ -152,7 +154,7 @@ function getSmoothFrames(player: Player<PlayerID> & { nextFrame?: Player<PlayerI
       .map((_, idx) => Array(idx).fill(0).reduce((o, _) => o ? o.nextFrame : o, player))
       // remove undefined
       .filter(f => f),
-  ] as Player<PlayerID>[]
+  ] as Player[]
 }
 
 function getCurrentBin(playerBins: PlayerShotBin[], { x, y }: Point) {

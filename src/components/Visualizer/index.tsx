@@ -1,13 +1,14 @@
 import "./style.scss"
 import React from 'react'
 
-import { Layer, Player, Video } from 'common/@types'
+import { Layer } from 'common/@types'
 import {
-  PlayerID,
   Attentions,
   DefensivePkg,
   Gaze, KeyPlayer,
-  Lv2Player, Lv2PlayerType, OffensivePkg, PLAYER_STATUS, GameID, VideoID,
+  Lv2Player, Lv2PlayerType, OffensivePkg, PLAYER_STATUS, 
+  PlayerID, Player,
+  Video
 } from '@types'
 
 import * as _draw from 'common/@draw'
@@ -29,17 +30,14 @@ export type LayerId = typeof layerIds[number]
 
 
 interface Props {
-  width: number
-  height: number
-
-  currentVideo: Video<GameID, VideoID>
+  currentVideo: Video
   currentFrameIdx: number
   currentFrame?: HTMLVideoElement
   // currentFrameData?: Frame
 
   gaze?: Gaze
   attentions?: Attentions
-  gazePlayers?: Player<PlayerID>[]
+  gazePlayers?: Player[]
 
   onPickPlayers?: (fIdx: number, lv1Players: Record<PlayerID, KeyPlayer>, lv2Players: Record<PlayerID, Lv2Player>) => void
 }
@@ -51,21 +49,20 @@ export class Visualizer extends React.Component<Props, {}> {
     return o
   }, {} as Record<LayerId, Layer | null>)
 
-  get2DPos(id: PlayerID, players: Player<PlayerID>[]) {
-    // if(id === undefined || players === undefined) return
+  get2DPos(id: PlayerID, players: Player[]) {
     const { bbox, keypoints } = players?.find(p => p.id === id)!
     const team = PLAYER_META[id].team
     const { y, h } = bbox
     const { left_hip, right_hip, left_ankle, right_ankle } = keypoints
 
-    // 1. calculate cx and cy
+    // calculate cx and cy
     const cx = (left_hip.x + right_hip.x) / 2
     const cy = (y + h + Math.max(left_ankle.y, right_ankle.y)) / 2
 
     return { cx, cy, team }
   }
 
-  isOnLv2Player = (p: Player<PlayerID>, lv2Players: Record<PlayerID, Lv2Player>) => p.id in lv2Players
+  isOnLv2Player = (p: Player, lv2Players: Record<PlayerID, Lv2Player>) => p.id in lv2Players
     && (
       (lv2Players[p.id].type.has(Lv2PlayerType.Interest) && lv2Players[p.id].on)
       || lv2Players[p.id].type.has(Lv2PlayerType.Normal)
@@ -76,7 +73,7 @@ export class Visualizer extends React.Component<Props, {}> {
     if (preProps.currentFrameIdx !== this.props.currentFrameIdx) {
       const {
         currentFrameIdx,
-        currentVideo, //dataTower
+        currentVideo,
         currentFrame,
         // currentFrameData,
       } = this.props
@@ -164,7 +161,8 @@ export class Visualizer extends React.Component<Props, {}> {
   }
 
   render() {
-    const { width, height } = this.props
+    const { currentVideo } = this.props
+    const { width = 0, height = 0 } = currentVideo ?? {}
 
     return (<div className='visualizationContainer'
 
