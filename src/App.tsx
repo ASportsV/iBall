@@ -19,6 +19,7 @@ import {
   BarChart,
   LineChart,
   Visualizer,
+  Overlay
 } from './components'
 import { Timeline } from 'common/@components'
 
@@ -61,7 +62,6 @@ export class App extends React.Component<{}, State> {
     playing: false,
   }
 
-
   #visualizer: React.RefObject<Visualizer> = React.createRef()
 
   get currentVideo() { return this.state.videos[this.state.currentVideoIdx] }
@@ -73,9 +73,6 @@ export class App extends React.Component<{}, State> {
     const videos = await Promise.all(params.VIDEO_IDS.map(async (videoId: string) => {
 
       try {
-        // const { max_frame: maxFrame, start_frame = 0 } = await fetch(`assets/${params.GAME_ID}/${videoId}/frames/max_frame.json`).then(r => r.json())
-        // const isTransit = videoId.endsWith('t')
-
         const { max_frame: maxFrame, start_frame = 0, fps, h, w, version } = (await fetch(`assets/${params.GAME_ID}/${videoId}/${videoId}-meta.json`).then(r => r.json()))
         const isTransit = videoId.endsWith(',t')
 
@@ -231,6 +228,7 @@ export class App extends React.Component<{}, State> {
       playing,
       videos,
     } = this.state;
+    const currentFrameData = videoEnv.frames?.[currentFrameIdx]
 
     return (
       <>
@@ -261,6 +259,13 @@ export class App extends React.Component<{}, State> {
                 })
               }}
             >
+
+              <Overlay
+                currentVideo={this.currentVideo}
+                currentFrameData={currentFrameData}
+                bbox={false}
+              />
+
               {/* {DEBUG.OVERLAY &&
                 <Overlay
                   width={videoWidth}
