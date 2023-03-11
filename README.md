@@ -20,8 +20,11 @@ We present iBall, a basketball video-watching system that leverages gaze-moderat
 3. `yarn start` to run this application
 
 ## ToDo
-- [ ] select different games
+- [ ] Improve the user interface:
+    - [ ] Select different games
+    - [ ] Legend
 - [ ] Release the gaze component
+- [ ] Release the 2nd game data
 - [ ] Release the CV pipeline
 - [ ] Better document the code
 
