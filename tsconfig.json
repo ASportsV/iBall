@@ -1,12 +1,11 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../common/tsconfig.json",
   "compilerOptions": {
     "baseUrl": "src"
   },
   "include": [
     "src",
-    "../common",
-    "../app_viscommentator_new/src/@animation"
+    "../common"
   ],
   "exclude": [
     "src/**/*@deprecated*"
