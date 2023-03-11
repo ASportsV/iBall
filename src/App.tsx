@@ -73,7 +73,7 @@ export class App extends React.Component<{}, State> {
     const videos = await Promise.all(params.VIDEO_IDS.map(async (videoId: string) => {
 
       try {
-        const { max_frame: maxFrame, start_frame = 0, fps, h, w, version } = (await fetch(`assets/${params.GAME_ID}/${videoId}/${videoId}-meta.json`).then(r => r.json()))
+        const { max_frame: maxFrame, start_frame = 0, fps, h, w, version } = (await fetch(`${process.env.PUBLIC_URL}/assets/${params.GAME_ID}/${videoId}/${videoId}-meta.json`).then(r => r.json()))
         const isTransit = videoId.endsWith(',t')
 
         return {
