@@ -7,7 +7,7 @@ import { postProcessing, IBallTables } from './loadData'
 declare const self: DedicatedWorkerGlobalScope;
 export default {} as typeof Worker & { new(): Worker };
 
-const db = new Database<IBallTables>({
+const db = new Database<PlayerID, IBallTables>({
   playerBins: "[playerId]",
   defenseRecords: "[PLAYER_ID+DEFENSE_CATEGORY]"
 })
