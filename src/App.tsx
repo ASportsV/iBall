@@ -1,12 +1,13 @@
 import "./App.scss";
+import 'react-circular-progressbar/dist/styles.css';
 
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import React from "react";
-import LoadingBar from 'react-top-loading-bar'
 import { IoPlaySharp, IoPauseSharp } from 'react-icons/io5'
 import { AiOutlineLoading } from 'react-icons/ai'
 
-import type { 
-  Attentions, GameID, Gaze, KeyPlayer, Lv2Player, 
+import type {
+  Attentions, Gaze, KeyPlayer, Lv2Player,
   PlayerID, Player,
   VideoID, Video
 } from '@types'
@@ -15,7 +16,7 @@ import { DEBUG } from 'common/@const'
 import { standardDeviation, globalFIdxToLocal, localFIdxToGlobalFIdx } from "common/@utils";
 
 import {
-  BarChart, 
+  BarChart,
   LineChart,
   Visualizer,
 } from './components'
@@ -81,7 +82,7 @@ export class App extends React.Component<{}, State> {
         return {
           gameId: params.GAME_ID,
           id: videoId as VideoID,
-          maxFrame, 
+          maxFrame,
           startFame: start_frame,
           isTransit,
           frameRate: fps, //params.GAME_ID === 'game1' ? 29.97 : 29.81,
@@ -191,6 +192,28 @@ export class App extends React.Component<{}, State> {
     }
   }
 
+  renderProgressbar() {
+    const { videos } = this.state
+    const value = 100 * videos.filter(v => v.loaded).length / videos.length
+    return value === 100 ? null : <div style={{
+      position: 'fixed',
+      left: '50%',
+      top: '50%',
+      transform: 'translate(-50%, -50%)'
+    }}>
+      <CircularProgressbar
+        value={value}
+        text={`${value | 0}%`}
+        styles={buildStyles({
+          pathColor: `rgb(62, 152, 199)`,
+          textColor: '#f88',
+          trailColor: '#d6d6d6',
+          backgroundColor: '#3e98c7',
+        })}
+      />
+    </div>
+  }
+
   render() {
     const {
       currentVideoIdx,
@@ -211,11 +234,12 @@ export class App extends React.Component<{}, State> {
 
     return (
       <>
-        <LoadingBar
+        {/* <LoadingBar
           color='#f11946'
           height={3}
           progress={100 * videos.filter(v => v.loaded).length / videos.length}
-        />
+        /> */}
+        {this.renderProgressbar()}
 
         <div className="up">
           <div className="full">
