@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "/iBall/static/css/main.24ad5b81.chunk.css",
+    "main.js": "/iBall/static/js/main.a32c5f14.chunk.js",
+    "main.js.map": "/iBall/static/js/main.a32c5f14.chunk.js.map",
+    "runtime-main.js": "/iBall/static/js/runtime-main.21d6624a.js",
+    "runtime-main.js.map": "/iBall/static/js/runtime-main.21d6624a.js.map",
+    "static/css/2.25dcfc5b.chunk.css": "/iBall/static/css/2.25dcfc5b.chunk.css",
+    "static/js/2.d4b4edff.chunk.js": "/iBall/static/js/2.d4b4edff.chunk.js",
+    "static/js/2.d4b4edff.chunk.js.map": "/iBall/static/js/2.d4b4edff.chunk.js.map",
+    "index.html": "/iBall/index.html",
+    "static/css/2.25dcfc5b.chunk.css.map": "/iBall/static/css/2.25dcfc5b.chunk.css.map",
+    "static/css/main.24ad5b81.chunk.css.map": "/iBall/static/css/main.24ad5b81.chunk.css.map",
+    "static/js/2.d4b4edff.chunk.js.LICENSE.txt": "/iBall/static/js/2.d4b4edff.chunk.js.LICENSE.txt",
+    "static/js/loadData.worker.d2e18fb6.js": "/iBall/static/js/loadData.worker.d2e18fb6.js",
+    "static/js/loadData.worker.d2e18fb6.js.map": "/iBall/static/js/loadData.worker.d2e18fb6.js.map",
+    "static/js/loadFrames.worker.9aec83b7.js": "/iBall/static/js/loadFrames.worker.9aec83b7.js",
+    "static/js/loadFrames.worker.9aec83b7.js.map": "/iBall/static/js/loadFrames.worker.9aec83b7.js.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.21d6624a.js",
+    "static/css/2.25dcfc5b.chunk.css",
+    "static/js/2.d4b4edff.chunk.js",
+    "static/css/main.24ad5b81.chunk.css",
+    "static/js/main.a32c5f14.chunk.js"
+  ]
+}
