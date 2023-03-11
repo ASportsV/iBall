@@ -1,27 +1,27 @@
 {
   "files": {
     "main.css": "/iBall/static/css/main.24ad5b81.chunk.css",
-    "main.js": "/iBall/static/js/main.d4a6c325.chunk.js",
-    "main.js.map": "/iBall/static/js/main.d4a6c325.chunk.js.map",
+    "main.js": "/iBall/static/js/main.611c1593.chunk.js",
+    "main.js.map": "/iBall/static/js/main.611c1593.chunk.js.map",
     "runtime-main.js": "/iBall/static/js/runtime-main.21d6624a.js",
     "runtime-main.js.map": "/iBall/static/js/runtime-main.21d6624a.js.map",
     "static/css/2.25dcfc5b.chunk.css": "/iBall/static/css/2.25dcfc5b.chunk.css",
-    "static/js/2.d4b4edff.chunk.js": "/iBall/static/js/2.d4b4edff.chunk.js",
-    "static/js/2.d4b4edff.chunk.js.map": "/iBall/static/js/2.d4b4edff.chunk.js.map",
+    "static/js/2.c9dedb54.chunk.js": "/iBall/static/js/2.c9dedb54.chunk.js",
+    "static/js/2.c9dedb54.chunk.js.map": "/iBall/static/js/2.c9dedb54.chunk.js.map",
     "index.html": "/iBall/index.html",
     "static/css/2.25dcfc5b.chunk.css.map": "/iBall/static/css/2.25dcfc5b.chunk.css.map",
     "static/css/main.24ad5b81.chunk.css.map": "/iBall/static/css/main.24ad5b81.chunk.css.map",
-    "static/js/2.d4b4edff.chunk.js.LICENSE.txt": "/iBall/static/js/2.d4b4edff.chunk.js.LICENSE.txt",
-    "static/js/loadData.worker.785f669f.js": "/iBall/static/js/loadData.worker.785f669f.js",
-    "static/js/loadData.worker.785f669f.js.map": "/iBall/static/js/loadData.worker.785f669f.js.map",
-    "static/js/loadFrames.worker.b40c666b.js": "/iBall/static/js/loadFrames.worker.b40c666b.js",
-    "static/js/loadFrames.worker.b40c666b.js.map": "/iBall/static/js/loadFrames.worker.b40c666b.js.map"
+    "static/js/2.c9dedb54.chunk.js.LICENSE.txt": "/iBall/static/js/2.c9dedb54.chunk.js.LICENSE.txt",
+    "static/js/loadData.worker.47de9307.js": "/iBall/static/js/loadData.worker.47de9307.js",
+    "static/js/loadData.worker.47de9307.js.map": "/iBall/static/js/loadData.worker.47de9307.js.map",
+    "static/js/loadFrames.worker.204ea63a.js": "/iBall/static/js/loadFrames.worker.204ea63a.js",
+    "static/js/loadFrames.worker.204ea63a.js.map": "/iBall/static/js/loadFrames.worker.204ea63a.js.map"
   },
   "entrypoints": [
     "static/js/runtime-main.21d6624a.js",
     "static/css/2.25dcfc5b.chunk.css",
-    "static/js/2.d4b4edff.chunk.js",
+    "static/js/2.c9dedb54.chunk.js",
     "static/css/main.24ad5b81.chunk.css",
-    "static/js/main.d4a6c325.chunk.js"
+    "static/js/main.611c1593.chunk.js"
   ]
 }
