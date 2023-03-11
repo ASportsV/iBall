@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/iBall/static/css/main.24ad5b81.chunk.css",
-    "main.js": "/iBall/static/js/main.611c1593.chunk.js",
-    "main.js.map": "/iBall/static/js/main.611c1593.chunk.js.map",
+    "main.js": "/iBall/static/js/main.c49eb7f0.chunk.js",
+    "main.js.map": "/iBall/static/js/main.c49eb7f0.chunk.js.map",
     "runtime-main.js": "/iBall/static/js/runtime-main.21d6624a.js",
     "runtime-main.js.map": "/iBall/static/js/runtime-main.21d6624a.js.map",
     "static/css/2.25dcfc5b.chunk.css": "/iBall/static/css/2.25dcfc5b.chunk.css",
@@ -22,6 +22,6 @@
     "static/css/2.25dcfc5b.chunk.css",
     "static/js/2.c9dedb54.chunk.js",
     "static/css/main.24ad5b81.chunk.css",
-    "static/js/main.611c1593.chunk.js"
+    "static/js/main.c49eb7f0.chunk.js"
   ]
 }
