@@ -40,7 +40,7 @@ function initParams() {
         alert('GameId must be game1 or game2')
     }
 
-    let unitId: UnitID = 'unit1'
+    let unitId: UnitID = 'unit0'
     if(params.get('u') !== null) {
         unitId = `unit${params.get('u')}` as UnitID
     }

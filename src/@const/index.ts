@@ -6,10 +6,13 @@ export * from './style'
 export const VIDEO_ID_GROUPS = {
     game2_unit0: [],
     game1_unit0: [
-        '0_,',
-        '1_c,t',
-        '2_c,l',
-        '3_c,t',
+        // '0_,',
+        // '1_c,t',
+        // '2_c,l',
+        // '3_c,t',
+        '4_,',
+        '5_c,t',
+        '6_,',
     ],
     game1_unit1: [
         '4_,',
