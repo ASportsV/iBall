@@ -83,7 +83,8 @@ export class App extends React.Component<{}, State> {
           startFame: start_frame,
           isTransit,
           frameRate: fps, //params.GAME_ID === 'game1' ? 29.97 : 29.81,
-          loaded: false,
+          loadedData: 0,
+          loadedVideo: 0,
           width: w,
           height: h,
           version,
@@ -100,13 +101,14 @@ export class App extends React.Component<{}, State> {
 
     // dataTower.onGaze = (currentGaze, gazePlayers) => this.setState({ currentGaze, gazePlayers })
     // dataTower.onUpdateLvInt = attentions => this.setState({ attentions })
-    videoEnv.onLoad = (videoId: VideoID) => {
+    videoEnv.onLoad = (videoId: VideoID, type: 'Data' | 'Video', progress) => {
       const { videos } = this.state
       const videoIdx = videos.findIndex(v => v.id === videoId)
       if (videoIdx !== -1) {
         videos[videoIdx] = {
           ...videos[videoIdx],
-          loaded: videoEnv.isLoaded(videos[videoIdx])
+          [`loaded${type}`]: progress === undefined ? 1 : progress
+          // loaded: videoEnv.isLoaded(videos[videoIdx])
         }
         this.setState({ videos: [...videos] })
       }
@@ -117,7 +119,8 @@ export class App extends React.Component<{}, State> {
       if (videoIdx !== -1) {
         videos[videoIdx] = {
           ...videos[videoIdx],
-          loaded: videoEnv.isLoaded(videos[videoIdx])
+          [`loaded${type}`]: 0
+          // loaded: videoEnv.isLoaded(videos[videoIdx])
         }
         this.setState({ videos: [...videos] })
       }
@@ -141,7 +144,6 @@ export class App extends React.Component<{}, State> {
 
     // load the frames
     const { currentVideoIdx } = this.state
-    // await videoEnv.loadBins()
     await videoEnv.fetchVideos()
     // preload videos
     await videoEnv.loadVideo(videos[currentVideoIdx])
@@ -189,9 +191,15 @@ export class App extends React.Component<{}, State> {
     }
   }
 
-  renderProgressbar() {
+  loadedPrecentage() {
     const { videos } = this.state
-    const value = 100 * videos.filter(v => v.loaded).length / videos.length
+    // assuming loading data takes 2x times than loading videos
+    const value = videos.reduce((o, d) => o += d.loadedData * 2 + d.loadedVideo, 0) / videos.reduce((o, v) => o + (v.isTransit ? 1 : 3), 0)
+    return value
+  }
+
+  renderProgressbar() {
+    const value = this.loadedPrecentage() * 100
     return value === 100 ? null : <div style={{
       position: 'fixed',
       left: '50%',
@@ -317,7 +325,7 @@ export class App extends React.Component<{}, State> {
                 id="playpause"
                 className="play button is-outlined"
                 type="button"
-                disabled={pauseLoading !== undefined || videos.filter(v => v.loaded).length !== videos.length}
+                disabled={pauseLoading !== undefined || this.loadedPrecentage() !== 1}
                 onClick={() => this.onPlayVideo()}
               >
                 {playing
