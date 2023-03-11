@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "bulma": "^0.9.3",
-    "caniuse-lite": "^1.0.30001282",
     "clsx": "^1.1.1",
     "d3-axis": "^3.0.0",
     "d3-dsv": "^3.0.1",
@@ -40,7 +39,7 @@
     "styled-components": "^5.3.3",
     "styled-icons": "^10.45.0"
   },
-  "config-overrides-path": "../react-app-rewired.config.js",
+  "config-overrides-path": "./common/react-app-rewired.config.js",
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
