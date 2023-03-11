@@ -21,7 +21,7 @@ export interface IBallTables {
   defenseRecords: DefenseRecord
 }
 
-export async function postProcessing({ gameId }: Video, frames: CacheFrameData<PlayerID>[], db: Database<IBallTables>) {
+export async function postProcessing({ gameId }: Video, frames: CacheFrameData<PlayerID>[], db: Database<PlayerID, IBallTables>) {
   const playerBins = await loadBins(db)
   const dfRecords = await loadDFRecord(db)
   // link frames
@@ -30,14 +30,14 @@ export async function postProcessing({ gameId }: Video, frames: CacheFrameData<P
     const { players, idx: frameIdx } = frame
 
     if (frameIdx > frames[0].idx) {
-      const { players: prePlayers } = frames[frameIdx - 1]
+      const { players: prePlayers = [] } = frames[frameIdx - 1]
       players?.forEach(player => {
         (player as any).preFrame = prePlayers?.find(p => p.id === player.id)
       })
     }
 
     if (frameIdx < frames[frames.length - 1].idx) {
-      const { players: nextPlayers } = frames[frameIdx + 1]
+      const { players: nextPlayers = [] } = frames[frameIdx + 1]
       players?.forEach(player => {
         (player as any).nextFrame = nextPlayers?.find(p => p.id === player.id)
       })
@@ -171,7 +171,7 @@ function getCurrentBin(playerBins: PlayerShotBin[], { x, y }: Point) {
   return currentBin
 }
 
-async function loadBins(db: Database<IBallTables>) {
+async function loadBins(db: Database<PlayerID, IBallTables>) {
   let playerBins = await db.myTables.playerBins.toArray()
   if (playerBins.length === 0) {
     // let shotRecords: ShotRecord[] = await db.shotRecrods.toArray()
@@ -210,7 +210,7 @@ async function loadBins(db: Database<IBallTables>) {
   }, {} as Partial<Record<PlayerID, PlayerShotBin[]>>)
 }
 
-async function loadDFRecord(db: Database<IBallTables>) {
+async function loadDFRecord(db: Database<PlayerID, IBallTables>) {
   // defense records
   let defenseRecords: DefenseRecord[] = await db.myTables.defenseRecords.toArray()
   if (defenseRecords.length === 0) {
