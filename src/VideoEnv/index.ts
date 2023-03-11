@@ -31,6 +31,7 @@ import IBallWorker from './loadData.worker'
 
 export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
 
+  // @deprecated
   // shotRecords: ShotRecord[] = []
 
   // gaze events
@@ -43,9 +44,6 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   #mousePos: Point = { x: 0, y: 0 }
   constructor(dataLoader = new DataLoader<GameID, VideoID, PlayerID>(IBallWorker)) {
     super(dataLoader)
-
-    console.log('Gaze init----')
-    const socket = new WebSocket('ws://localhost:5000/echo');
 
     let ox: number | undefined = undefined
     let oy: number | undefined = undefined
@@ -63,7 +61,9 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
       })
     }
 
-    socket.addEventListener('message', this.onSocket);
+    // console.log('Gaze init----')
+    // const socket = new WebSocket('ws://localhost:5000/echo');
+    // socket.addEventListener('message', this.onSocket);
   }
 
   /**
