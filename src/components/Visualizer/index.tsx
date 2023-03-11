@@ -6,7 +6,7 @@ import {
   Attentions,
   DefensivePkg,
   Gaze, KeyPlayer,
-  Lv2Player, Lv2PlayerType, OffensivePkg, PLAYER_STATUS, 
+  Lv2Player, Lv2PlayerType, OffensivePkg, PLAYER_STATUS,
   PlayerID, Player,
   Video
 } from '@types'
@@ -26,8 +26,6 @@ const layerIds = ['0_bg', '1_vis', '2_fg', '3_annot', '4_debug'] as const
 // 3annot --> highlighted players
 
 export type LayerId = typeof layerIds[number]
-
-
 
 interface Props {
   currentVideo: Video
@@ -82,7 +80,7 @@ export class Visualizer extends React.Component<Props, {}> {
       this.cleanAllExcept('0_bg')
       _draw.bg(this.layers['0_bg']!, currentFrame)
       // dark overlay
-      _draw.overlay(this.layers['1_vis']!)
+      _draw.overlay(this.layers['1_vis']!, 0.18)
       if (currentVideo.isTransit || params.MODE === 'RAW') return
 
       const currentFrameData = videoEnv.frames?.[currentFrameIdx]

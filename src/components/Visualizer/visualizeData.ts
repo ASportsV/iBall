@@ -4,7 +4,7 @@ import { getAngle } from "common/@utils";
 import { PLAYER_META, COLORS, FOCUS, LV_INTEREST_THRESHOLD } from "@const";
 import { PlayerID, KeyPlayer, KeyPlayerType, Lv2Player, Lv2PlayerType, Player } from "@types";
 
-import * as draw from './draw'
+import * as _draw from 'common/@draw'
 
 export interface VisCircle {
   cx: number,
@@ -134,7 +134,6 @@ function drawVisSheilds(visCtx: CanvasRenderingContext2D | OffscreenCanvasRender
     if ((a2 < a1 && !(a1 > 1.5 && a2 < 0.5)) || (a1 < .5 && a2 > 1.5)) [a2, a1] = [a1, a2]
     return [a1, a2]
   }
-
 
   // draw lines
   const MAX_DIST = 12
@@ -334,7 +333,7 @@ function drawHL(ctx: CanvasRenderingContext2D,
         x, y, w, h,
         x, y, w, h)
 
-      draw.cone(ctx,
+      _draw.cone(ctx,
         {
           x: x + w * 0.5,
           y: y + h,
