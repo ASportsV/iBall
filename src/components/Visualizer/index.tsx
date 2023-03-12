@@ -16,6 +16,7 @@ import * as draw from './visualizeData'
 import { EnabledFeatures, videoEnv } from '../../App'
 import { VisRing, VisSheild } from "./visualizeData"
 import { PLAYER_META } from "@const"
+import { Scales } from "@utils"
 
 const layerIds = ['0_bg', '1_vis', '2_fg', '3_annot', '4_debug'] as const
 
@@ -107,7 +108,7 @@ export class Visualizer extends React.Component<Props, {}> {
           // console.log('Offensive circle', id, PLAYER_META[id].ln)
           let { smoothRegionExp, inOffsensiveCourt } = dataPkg as OffensivePkg
           const { cx, cy } = this.get2DPos(id, players)
-          const fill = videoEnv.scales.regionExp(smoothRegionExp)
+          const fill = Scales.regionExp(smoothRegionExp)
           return { cx, cy, fill, size: Math.min(1, smoothRegionExp / 2), inOffsensiveCourt }
         })
 

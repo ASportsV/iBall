@@ -171,7 +171,7 @@ function getCurrentBin(playerBins: PlayerShotBin[], { x, y }: Point) {
   return currentBin
 }
 
-async function loadBins(db: Database<PlayerID, IBallTables>) {
+export async function loadBins(db: Database<PlayerID, IBallTables>) {
   let playerBins = await db.myTables.playerBins.toArray()
   if (playerBins.length === 0) {
     // let shotRecords: ShotRecord[] = await db.shotRecrods.toArray()

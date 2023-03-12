@@ -1,6 +1,3 @@
-import { scaleSequential, scaleSqrt, scaleOrdinal } from 'd3-scale'
-import { interpolateReds, interpolateYlGnBu, schemeSet3 } from 'd3-scale-chromatic'
-
 import type { Ball, Point } from 'common/@types'
 import {
   PlayerID, TeamID,
@@ -16,7 +13,7 @@ import {
 } from "@types"
 
 import { distPoints, union } from 'common/@utils';
-import { getCanvasAbsTopLeft, GOAL_BASKET_POS, hRadius } from '@utils';
+import { getCanvasAbsTopLeft, GOAL_BASKET_POS, hexbin, hRadius } from '@utils';
 
 import { DEBUG } from 'common/@const'
 import {
@@ -26,9 +23,9 @@ import {
 import { params } from 'param';
 
 import { VideoEnv } from 'common/VideoEnv';
-import { DataLoader } from 'common/DataLoader';
-import IBallWorker from './loadData.worker'
+
 import { EnabledFeatures } from 'App';
+import { IBallDataLoader } from './DataLoader';
 
 export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   // gaze events
@@ -39,7 +36,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   #gazeQueue: Gaze[] = []
   #frameQueue: FrameStamp[] = []
   #mousePos: Point = { x: 0, y: 0 }
-  constructor(dataLoader = new DataLoader<GameID, VideoID, PlayerID>(IBallWorker)) {
+  constructor(dataLoader = new IBallDataLoader()) {
     super(dataLoader)
 
     if (DEBUG.MOUSE_GAZE) {
@@ -160,7 +157,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   updateInteLv(gaze: Gaze, attendPlayers?: Player[]) {
     const { ts, fIdx } = gaze
     const { lastTs, players } = this.#playerAttentions
-    const T = 1000 // ms
+    const T = 200 // default 1000ms
     const decayRate = 1 / 5
     // const maxAttention = incrRate * 19.144 * 0.96
 
@@ -459,24 +456,24 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   /**
    * -------------- Game data ----------------
    */
-  scales = {
-    regionScale: scaleOrdinal<string>(schemeSet3),
-    twoPTColor: scaleSequential<string>(interpolateYlGnBu)
-      // .domain([-0.4, 0.4]),
-      .domain([0.2, 0.8]),
-    twoPT: scaleSequential<number>()
-      .domain([0, 0.4])
-      .range([0, 1]),
-    threePTColor: scaleSequential<string>(interpolateYlGnBu)
-      // .domain([-0.27, 0.27]),
-      .domain([0.2, 0.8]),
-    threePT: scaleSequential<number>()
-      .domain([0, 0.27])
-      .range([0, 1]),
-    radiusScale: scaleSqrt()
-      .domain([0, 1])
-      .range([1, hRadius]),
-    regionExp: scaleSequential<string>(interpolateReds)
-      .domain([0.1, params.GAME_ID === 'game1' ? 2 : 2.5])
-  } as const
+  async loadBins() {
+    await (this.dataLoader as IBallDataLoader).loadBins()
+  }
+  getPlayerBins(playerId?: PlayerID) {
+    if (!playerId) return
+    return (this.dataLoader as IBallDataLoader).playerBins[playerId]
+  }
+  getCurrentBin(player?: Player) {
+    if (!player) return
+
+    const { x: tx, y: ty } = player.tracking
+    const currentBin = (tx !== undefined && ty !== undefined)
+      ? hexbin([{
+        LOC_X: tx * 10,
+        LOC_Y: ty * 10
+      } as any])[0]
+      : undefined;
+    return currentBin
+  }
+
 }

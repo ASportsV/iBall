@@ -1,0 +1,25 @@
+.debug {
+  .court {
+    background-color: #fff;
+
+    .marker {
+      background-color: lightpink;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      position: absolute;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      text-align: center;
+      border: #424242 1.5px solid;
+    }
+
+    .court_bin {
+        opacity: 0.3;
+        stroke: #313131;
+    }
+    // .court-img {
+    //   width: 648px;
+    // }
+  }
+}

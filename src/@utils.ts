@@ -1,4 +1,6 @@
 import { Hexbin, HexbinBin, hexbin as d3Hexbin } from 'd3-hexbin';
+import { scaleSequential, scaleSqrt, scaleOrdinal } from 'd3-scale'
+import { interpolateReds, interpolateYlGnBu, schemeSet3 } from 'd3-scale-chromatic'
 
 import type { Point } from "common/@types"
 import { distPoints } from "common/@utils"
@@ -6,6 +8,7 @@ import { distPoints } from "common/@utils"
 import { PLAYER_META } from "@const"
 import type { GameID } from '@types'
 import type { PlayerID, CachePlayerBin, ShotRecord } from '@types';
+import { params } from 'param';
 
 if (process.env.NODE_ENV !== 'production') {
   (global as any).$RefreshReg$ = () => { };
@@ -373,7 +376,29 @@ export function getCanvasAbsTopLeft() {
   }
 }
 
+const Scales = {
+  regionScale: scaleOrdinal<string>(schemeSet3),
+  twoPTColor: scaleSequential<string>(interpolateYlGnBu)
+    // .domain([-0.4, 0.4]),
+    .domain([0.2, 0.8]),
+  twoPT: scaleSequential<number>()
+    .domain([0, 0.4])
+    .range([0, 1]),
+  threePTColor: scaleSequential<string>(interpolateYlGnBu)
+    // .domain([-0.27, 0.27]),
+    .domain([0.2, 0.8]),
+  threePT: scaleSequential<number>()
+    .domain([0, 0.27])
+    .range([0, 1]),
+  radiusScale: scaleSqrt()
+    .domain([0, 1])
+    .range([1, hRadius]),
+  regionExp: scaleSequential<string>(interpolateReds)
+    .domain([0.1, params.GAME_ID === 'game1' ? 2 : 2.5])
+} as const
+
 export {
+  Scales,
   mapRegionToPoint, TwoOrThreePt, normalize, getPlayerBins,
   PLAYER_ID_TO_OFF_RIGHT, POS_TO_OFF_TEAM,
   getArea, getRegionKey, groupShotsByRegion, mapLOCTOTracking

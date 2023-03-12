@@ -21,7 +21,8 @@ import {
   BarChart,
   LineChart,
   Visualizer,
-  Overlay
+  Overlay,
+  Court
 } from './components'
 import { Timeline } from 'common/@components'
 
@@ -32,11 +33,11 @@ export const videoEnv = new IBallVideoEnv()
 
 // now this flag is a bit messy, some are applied to pickPlayer, some are applied to rendering
 const enabledFeatures = {
-  vis_off_ring: false,
-  vis_def_sheild: false,
-  vis_key_player: false,
-  vis_empty_player: false,
-  gaze_focus: false,
+  vis_off_ring: true,
+  vis_def_sheild: true,
+  vis_key_player: true,
+  vis_empty_player: true,
+  gaze_focus: true,
   gaze_filter: false,
   onPlayers: [] as PlayerID[],
   offPlayers: [] as PlayerID[]
@@ -164,6 +165,7 @@ export class App extends React.Component<{}, State> {
 
     // load the frames
     const { currentVideoIdx } = this.state
+    await videoEnv.loadBins()
     await videoEnv.fetchVideos()
     // preload videos
     await videoEnv.loadVideo(videos[currentVideoIdx])
@@ -247,10 +249,10 @@ export class App extends React.Component<{}, State> {
         .filter(([k, v]) => k !== 'onPlayers' && k !== 'offPlayers')
         .map(([k, v]) => {
 
-          return <div className="featureItem">
+          return <div className="featureItem" key={k}>
             <Toggle
               id='cheese-status'
-              defaultChecked={v as boolean}
+              // defaultChecked={v as boolean}
               checked={v as boolean}
               onChange={(e) => {
                 ; (features as any)[k] = !v
@@ -331,9 +333,9 @@ export class App extends React.Component<{}, State> {
               } */}
             </Visualizer>
             {DEBUG && <div className="debug">
-              {/* {DEBUG.COURT && <Court
-                currentFrameIdx={currentFrameIdx}
-              />} */}
+              {DEBUG.COURT && <Court
+                currentFrameData={currentFrameData}
+              />}
               {DEBUG.ATTENTIONS &&
                 <div className="chart">
                   <BarChart

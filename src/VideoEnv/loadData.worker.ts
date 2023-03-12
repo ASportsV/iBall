@@ -2,7 +2,7 @@
 import type { GameID, PlayerID, VideoID } from '@types';
 
 import { loadFramesFromDBToMem, Database } from 'common/DataLoader'
-import { postProcessing, IBallTables } from './loadData'
+import { postProcessing, IBallTables, loadBins } from './loadData'
 
 declare const self: DedicatedWorkerGlobalScope;
 export default {} as typeof Worker & { new(): Worker };
@@ -22,5 +22,8 @@ onmessage = async (e) => {
       }
       postMessage(['Frames', frames])
       break
+    case 'Bins':
+      const playerBins = await loadBins(db)
+      postMessage(['Bins', playerBins])
   }
 }
