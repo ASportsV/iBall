@@ -99,8 +99,8 @@ export class App extends React.Component<{}, State> {
     // set up videoEnv
     videoEnv.videos = videos
 
-    // dataTower.onGaze = (currentGaze, gazePlayers) => this.setState({ currentGaze, gazePlayers })
-    // dataTower.onUpdateLvInt = attentions => this.setState({ attentions })
+    videoEnv.onGaze = (currentGaze, gazePlayers) => this.setState({ currentGaze, gazePlayers })
+    videoEnv.onUpdateLvInt = attentions => this.setState({ attentions })
     videoEnv.onLoad = (videoId: VideoID, type: 'Data' | 'Video', progress) => {
       const { videos } = this.state
       const videoIdx = videos.findIndex(v => v.id === videoId)
@@ -131,7 +131,7 @@ export class App extends React.Component<{}, State> {
 
     // setup videoEngine
     // invoke the handler for each frame
-    // this.videoEngine.addOnFrameListener(this.pushFrameHistory)
+    videoEnv.addOnFrameListener(this.pushFrameHistory)
     videoEnv.addOnFrameListener(async (videoId, frameIdx, ts, videoFrame) => {
       const { videos } = this.state
       const newCurVideoIdx = videos.findIndex(v => v.id === videoId)
@@ -161,18 +161,18 @@ export class App extends React.Component<{}, State> {
     // videoEngine.onPlay = undefined
   }
 
-  // pushFrameHistory = (videoId: string, localFrameIdx: number, ts: number) => {
-  //   const { videos } = this.state
-  //   const videoIdx = videos.findIndex(v => v.id === videoId)
+  pushFrameHistory = (videoId: string, localFrameIdx: number, ts: number) => {
+    const { videos } = this.state
+    const videoIdx = videos.findIndex(v => v.id === videoId)
 
-  //   if (videoIdx === -1) {
-  //     this.videoEngine.pause()
-  //     return
-  //   }
+    if (videoIdx === -1) {
+      videoEnv.pause()
+      return
+    }
 
-  //   const video = videos[videoIdx]
-  //   dataTower.pushFrameHistory({ videoId: video.id, fIdx: localFrameIdx, ts })
-  // }
+    const video = videos[videoIdx]
+    videoEnv.pushFrameHistory({ videoId: video.id, fIdx: localFrameIdx, ts })
+  }
 
   onClickInterval = async (clipId: number, globalFrameIdx: number) => {
     // 直接给videoFrame设帧
@@ -240,11 +240,6 @@ export class App extends React.Component<{}, State> {
 
     return (
       <>
-        {/* <LoadingBar
-          color='#f11946'
-          height={3}
-          progress={100 * videos.filter(v => v.loaded).length / videos.length}
-        /> */}
         {this.renderProgressbar()}
 
         <div className="up">
@@ -271,6 +266,8 @@ export class App extends React.Component<{}, State> {
               <Overlay
                 currentVideo={this.currentVideo}
                 currentFrameData={currentFrameData}
+                gaze={DEBUG.GAZE ? currentGaze : undefined}
+                gazePlayers={gazePlayers}
                 bbox={false}
               />
 
@@ -279,8 +276,6 @@ export class App extends React.Component<{}, State> {
                   width={videoWidth}
                   height={videoHeight}
                   frameIdx={currentFrameIdx}
-                  gazePlayers={gazePlayers}
-                  gaze={DEBUG.GAZE ? currentGaze : undefined}
                   bbox={DEBUG.BBOX}
                   isTransit={this.currentVideo?.isTransit}
                 />

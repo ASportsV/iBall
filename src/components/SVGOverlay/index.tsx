@@ -31,7 +31,7 @@ export class Overlay extends React.Component<Props> {
       {...svgLayerProps}
     >
 
-      {/* {gaze && <g transform={`translate(${gaze.x}, ${gaze.y})`}>
+      {gaze && <g transform={`translate(${gaze.x}, ${gaze.y})`}>
         <circle r={GAZE_R}
           stroke={'red'}
           fill={'rgba(255, 0, 0, 0.1)'}></circle>
@@ -46,7 +46,7 @@ export class Overlay extends React.Component<Props> {
           fIdx: {gaze.fIdx}
         </text>
       </g>
-      } */}
+      }
 
       {!isTransit && <text x={10} y={20} fill={'#fff'}>Team w/ ball: {teamWithBall}</text>}
       {!isTransit && <text x={150} y={20} fill={'#fff'}>Ballholder: {ball?.playerId ? PLAYER_META[ball!.playerId].ln : null}</text>}
