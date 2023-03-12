@@ -30,10 +30,6 @@ import { DataLoader } from 'common/DataLoader';
 import IBallWorker from './loadData.worker'
 
 export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
-
-  // @deprecated
-  // shotRecords: ShotRecord[] = []
-
   // gaze events
   onGaze?: (p: Gaze, player?: Player[]) => void
   onUpdateLvInt?: (att: Attentions) => void
@@ -45,20 +41,20 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   constructor(dataLoader = new DataLoader<GameID, VideoID, PlayerID>(IBallWorker)) {
     super(dataLoader)
 
-    let ox: number | undefined = undefined
-    let oy: number | undefined = undefined
     if (DEBUG.MOUSE_GAZE) {
       document.body.addEventListener('mousemove', e => {
-        if (ox === undefined && oy === undefined) {
-          const bbox = document.getElementById('canvasWrapper')?.getBoundingClientRect()
-          if (bbox === undefined) return
-          ox = bbox.x
-          oy = bbox.y
-        }
-        //console.log('mousepos', e.clientX, e.clientY)
+
+        const bbox = document.getElementById('canvasWrapper')?.getBoundingClientRect()
+        if (bbox === undefined) return
+        const ox = bbox.x
+        const oy = bbox.y
         const { wScale = 1, hScale = 1 } = getCanvasAbsTopLeft()
         this.#mousePos = { x: (e.clientX - ox!) * wScale, y: (e.clientY - oy!) * hScale }
       })
+
+      setInterval(() => {
+        this.onSocket({ data: JSON.stringify([[0, 0], Date.now() / 1000]) })
+      }, 1000 / 30)
     }
 
     // console.log('Gaze init----')
@@ -231,7 +227,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
    * @returns 
    */
   getNextBallHolder(currentFIdx: number, timeRange: number, ball?: Ball, teamWithBall?: TeamID) {
-    timeRange *=  this.currentVideo?.frameRate! //params.VIDEO_FRAME_RATE
+    timeRange *= this.currentVideo?.frameRate!
     for (let i = currentFIdx; i < currentFIdx + timeRange; ++i) {
       const nextFrame = this.frames?.[i]
       if (!nextFrame) continue
