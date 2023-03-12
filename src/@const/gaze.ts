@@ -11,4 +11,4 @@ export const EXPLORE_STAY_THRESHOLD = 1500
 // and his closet defender is larger than EMPTY_SPACE_THRESHOLD, the system will think the offensor is an empty player
 export const EMPTY_SPACE_THRESHOLD = 8
 export const MAX_HIGHLIGHTED = 4 //{ S1: 2, S2: 3 }[LV_SYNC]
-export const FOCUS = { min: 10, max: 630, mina: 0.2, maxa: 0.75 }
+export const FOCUS = { min: 10, max: 630, mina: 0.2, maxa: 0.35 }
