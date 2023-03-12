@@ -10,7 +10,8 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
 }
 
 $top-height: 54px;
@@ -223,5 +224,29 @@ $bbottom-height: 32px;
   .chart {
     width: fit-content;
     background-color: #fff;
+  }
+}
+
+.featurePanel {
+  width: 200px;
+  position: fixed;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px;
+  right: 20px;
+  top: 40px;
+  z-index: 100;
+
+  .featureItem {
+    display: flex;
+    gap: 8px;
+
+    span {
+      text-transform: capitalize;
+    }
+
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
   }
 }

@@ -1,8 +1,10 @@
 import "./App.scss";
 import 'react-circular-progressbar/dist/styles.css';
+import "react-toggle/style.css"
 
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import React from "react";
+import Toggle from 'react-toggle'
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { IoPlaySharp, IoPauseSharp } from 'react-icons/io5'
 import { AiOutlineLoading } from 'react-icons/ai'
 
@@ -35,10 +37,11 @@ const enabledFeatures = {
   vis_key_player: false,
   vis_empty_player: false,
   gaze_focus: false,
-  gaze_filter: false
+  gaze_filter: false,
+  onPlayers: [] as PlayerID[],
+  offPlayers: [] as PlayerID[]
 }
 export type EnabledFeatures = typeof enabledFeatures
-
 
 interface State {
   videos: Video[]
@@ -236,6 +239,29 @@ export class App extends React.Component<{}, State> {
     </div>
   }
 
+  renderToggle() {
+    const { features } = this.state
+    return <div className="featurePanel">
+      <h4 style={{ textAlign: 'center' }}>Features</h4>
+      {Object.entries(features)
+        .filter(([k, v]) => k !== 'onPlayers' && k !== 'offPlayers')
+        .map(([k, v]) => {
+
+          return <div className="featureItem">
+            <Toggle
+              id='cheese-status'
+              defaultChecked={v as boolean}
+              checked={v as boolean}
+              onChange={(e) => {
+                ; (features as any)[k] = !v
+                this.setState({ features })
+              }} />
+            <span>{k.split('_').join(' ')}</span>
+          </div>
+        })}
+    </div>
+  }
+
   render() {
     const {
       currentVideoIdx,
@@ -260,6 +286,8 @@ export class App extends React.Component<{}, State> {
     return (
       <>
         {this.renderProgressbar()}
+
+        {this.renderToggle()}
 
         <div className="up">
           <div className="full">
