@@ -107,9 +107,10 @@ export class Visualizer extends React.Component<Props, {}> {
           let { smoothRegionExp, inOffsensiveCourt } = dataPkg as OffensivePkg
           const { cx, cy } = this.get2DPos(id, players)
 
-          if (params.UNIT_ID === 'unit0') {
-            smoothRegionExp = PLAYER_RANDOM_FACTOR[id] * 2
-          }
+          // @TODO, for training purpose
+          // if (params.UNIT_ID === 'unit0') {
+          //   smoothRegionExp = PLAYER_RANDOM_FACTOR[id] * 2
+          // }
           const fill = videoEnv.scales.regionExp(smoothRegionExp)
           return { cx, cy, fill, size: Math.min(1, smoothRegionExp / 2), inOffsensiveCourt }
         })
@@ -121,9 +122,10 @@ export class Visualizer extends React.Component<Props, {}> {
           const { cx, cy } = this.get2DPos(id, players)
           const { cx: dx, cy: dy } = this.get2DPos(defendingPlayer, players)
 
-          if (params.UNIT_ID === 'unit0') {
-            smoothDFdiff = PLAYER_RANDOM_FACTOR[id]
-          }
+          // @TODO, for training purpose
+          // if (params.UNIT_ID === 'unit0') {
+          //   smoothDFdiff = PLAYER_RANDOM_FACTOR[id]
+          // }
 
           return {
             cx, cy,
