@@ -1,5 +1,6 @@
 
-export const miniMapSize: [number, number] = [720, 720 * 50 / 94]
+const miniMapWidth = 360 * 1
+export const miniMapSize: [number, number] = [miniMapWidth, miniMapWidth * 50 / 94]
 export const COLORS = {
     offense_inner_border: '#f5f5f5',
     offense_bg_fill: '#f5f5f577',

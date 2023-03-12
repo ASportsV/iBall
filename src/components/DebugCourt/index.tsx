@@ -69,7 +69,8 @@ export const Court = memo(function Court(props: CourtProps) {
           top: ty! * scaleT2Minimap,
           left: tx! * scaleT2Minimap,
           backgroundColor: ['GSW', 'LAC'].includes(team) ? 'steelblue' : '#ff6347',
-          color: ball?.playerId === id ? 'red' : '#000'
+          color: ball?.playerId === id ? 'red' : '#000',
+          fontSize: ball?.playerId === id ? '15px' : '12px'
         }}
       >{PLAYER_META[id]?.ln}</div>;
     });

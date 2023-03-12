@@ -37,6 +37,7 @@ const enabledFeatures = {
   vis_def_sheild: true,
   vis_key_player: true,
   vis_empty_player: true,
+  vis_top_view: true,
   gaze_focus: true,
   gaze_filter: false,
   onPlayers: [] as PlayerID[],
@@ -291,6 +292,9 @@ export class App extends React.Component<{}, State> {
 
         {this.renderToggle()}
 
+            {features.vis_top_view && <Court
+              currentFrameData={currentFrameData}
+            />}
         <div className="up">
           <div className="full">
             <Visualizer ref={this.#visualizer}
@@ -332,10 +336,8 @@ export class App extends React.Component<{}, State> {
                 />
               } */}
             </Visualizer>
+
             {DEBUG && <div className="debug">
-              {DEBUG.COURT && <Court
-                currentFrameData={currentFrameData}
-              />}
               {DEBUG.ATTENTIONS &&
                 <div className="chart">
                   <BarChart
@@ -382,7 +384,7 @@ export class App extends React.Component<{}, State> {
               </button>
             </div>
           </div>
-          <div className="divide"> </div>
+          {/* <div className="divide"> </div> */}
         </div>
 
         {DEBUG.TIMELINE &&

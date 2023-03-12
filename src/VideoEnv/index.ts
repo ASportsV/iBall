@@ -157,7 +157,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   updateInteLv(gaze: Gaze, attendPlayers?: Player[]) {
     const { ts, fIdx } = gaze
     const { lastTs, players } = this.#playerAttentions
-    const T = 200 // default 1000ms
+    const T = 500 // default 1000ms
     const decayRate = 1 / 5
     // const maxAttention = incrRate * 19.144 * 0.96
 

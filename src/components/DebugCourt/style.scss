@@ -1,25 +1,29 @@
-.debug {
-  .court {
-    background-color: #fff;
+.court {
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, 0);
+  background-color: #f5f5f5;
+  z-index: 100;
+  bottom: 100px;
+  border: 1px #313131 solid;
 
-    .marker {
-      background-color: lightpink;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      position: absolute;
-      transform: translate(-50%, -50%);
-      user-select: none;
-      text-align: center;
-      border: #424242 1.5px solid;
-    }
-
-    .court_bin {
-        opacity: 0.3;
-        stroke: #313131;
-    }
-    // .court-img {
-    //   width: 648px;
-    // }
+  .marker {
+    background-color: lightpink;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    user-select: none;
+    text-align: center;
+    border: #424242 1.5px solid;
   }
+
+  .court_bin {
+    opacity: 0.3;
+    stroke: #313131;
+  }
+  // .court-img {
+  //   width: 648px;
+  // }
 }

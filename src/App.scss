@@ -86,7 +86,7 @@ $bbottom-height: 32px;
       background-color: #121214;
       display: flex;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: flex-start;
       padding: 8px;
     }
 
@@ -135,6 +135,7 @@ $bbottom-height: 32px;
     position: relative;
     justify-content: center;
     align-items: center;
+    margin-left: 250px;
     display: flex;
     margin-top: 12px;
 
