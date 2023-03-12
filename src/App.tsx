@@ -28,6 +28,18 @@ import { IBallVideoEnv } from "VideoEnv";
 
 export const videoEnv = new IBallVideoEnv()
 
+// now this flag is a bit messy, some are applied to pickPlayer, some are applied to rendering
+const enabledFeatures = {
+  vis_off_ring: false,
+  vis_def_sheild: false,
+  vis_key_player: false,
+  vis_empty_player: false,
+  gaze_focus: false,
+  gaze_filter: false
+}
+export type EnabledFeatures = typeof enabledFeatures
+
+
 interface State {
   videos: Video[]
   pauseLoading: VideoID | undefined
@@ -40,6 +52,9 @@ interface State {
   attentions?: Attentions
   attentionsOverTime?: Attentions[]
   pickedPlayers: Record<number, { lv1Players: Record<PlayerID, KeyPlayer>, lv2Players: Record<PlayerID, Lv2Player> }>
+
+  // enable features:
+  features: EnabledFeatures
 
   playing: boolean
 }
@@ -58,6 +73,8 @@ export class App extends React.Component<{}, State> {
     attentions: undefined,
     attentionsOverTime: undefined,
     pickedPlayers: {},
+    //
+    features: enabledFeatures,
     //
     playing: false,
   }
@@ -224,6 +241,8 @@ export class App extends React.Component<{}, State> {
       currentVideoIdx,
       currentFrameIdx,
 
+      features,
+
       currentGaze,
       currentFrame,
       gazePlayers,
@@ -249,6 +268,8 @@ export class App extends React.Component<{}, State> {
               currentVideo={this.currentVideo}
               currentFrameIdx={currentFrameIdx}
               currentFrame={currentFrame}
+              // feature
+              features={features}
               // gaze
               gaze={currentGaze}
               gazePlayers={gazePlayers}

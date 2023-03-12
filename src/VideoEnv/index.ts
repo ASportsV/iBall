@@ -28,6 +28,7 @@ import { params } from 'param';
 import { VideoEnv } from 'common/VideoEnv';
 import { DataLoader } from 'common/DataLoader';
 import IBallWorker from './loadData.worker'
+import { EnabledFeatures } from 'App';
 
 export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   // gaze events
@@ -288,7 +289,11 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
 
   // helper function  
   #getPlayerTeam = (playerId?: PlayerID) => playerId ? PLAYER_META[playerId].team : undefined
-  pickPlayers(currentFIdx: number, focus?: { pos: Point; }) {
+  pickPlayers(currentFIdx: number,
+    features: EnabledFeatures,
+    filter_center?: { pos: Point; }
+  ) {
+
     if (Object.keys(this.#keyPlayers).length > this.#keyPlayer_buffer_size) {
       this.#keyPlayers.pop()
     }
@@ -333,12 +338,18 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
       lv2Players.push({ id: nextBallHolder, type: new Set([Lv2PlayerType.Normal]) })
     }
 
-    const emptyPlayers = this.getEmptyPlayer(players?.filter(p => !currentlv1Players.some(d => d.id === p.id)), ball?.playerId, teamWithBall)
+    const emptyPlayers = features.vis_empty_player
+      ? this.getEmptyPlayer(
+        players?.filter(p => !currentlv1Players.some(d => d.id === p.id)),
+        ball?.playerId,
+        teamWithBall)
+      : []
+    // do gaze_filter
     emptyPlayers
       ?.filter(({ bbox }) => {
-        if (!focus) return true
+        if (!filter_center) return true
         const radius = 60
-        const { x: gx, y: gy } = focus.pos
+        const { x: gx, y: gy } = filter_center.pos
         return gx > (bbox.x - radius) &&
           gy > (bbox.y - radius) &&
           gx < (bbox.x + bbox.w + radius) &&
@@ -404,8 +415,9 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
       }))
     ]
 
-    // Step2 find the interested players
-    if (params.LV_INTRE) {
+    // Step2 find the interested players, gaze_focus, default to open
+    if (features.gaze_focus) {
+
       Object.entries(playerAttentions)
         .forEach(([pId, { att, on, looked }]) => {
           lv2Players.push({ id: +pId as PlayerID, att, on, looked, type: new Set([Lv2PlayerType.Interest]) })

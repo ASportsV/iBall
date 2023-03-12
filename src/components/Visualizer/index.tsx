@@ -13,10 +13,9 @@ import {
 
 import * as _draw from 'common/@draw'
 import * as draw from './visualizeData'
-import { videoEnv } from '../../App'
-import { VisCircle, VisSheild } from "./visualizeData"
-import { PLAYER_META, PLAYER_RANDOM_FACTOR } from "@const"
-import { params } from "param"
+import { EnabledFeatures, videoEnv } from '../../App'
+import { VisRing, VisSheild } from "./visualizeData"
+import { PLAYER_META } from "@const"
 
 const layerIds = ['0_bg', '1_vis', '2_fg', '3_annot', '4_debug'] as const
 
@@ -36,6 +35,8 @@ interface Props {
   gaze?: Gaze
   attentions?: Attentions
   gazePlayers?: Player[]
+
+  features: EnabledFeatures
 
   onPickPlayers?: (fIdx: number, lv1Players: Record<PlayerID, KeyPlayer>, lv2Players: Record<PlayerID, Lv2Player>) => void
 }
@@ -71,9 +72,8 @@ export class Visualizer extends React.Component<Props, {}> {
     if (preProps.currentFrameIdx !== this.props.currentFrameIdx) {
       const {
         currentFrameIdx,
-        currentVideo,
         currentFrame,
-        // currentFrameData,
+        features
       } = this.props
       if (!currentFrame) return
 
@@ -81,7 +81,7 @@ export class Visualizer extends React.Component<Props, {}> {
       _draw.bg(this.layers['0_bg']!, currentFrame)
       // dark overlay
       _draw.overlay(this.layers['1_vis']!, 0.18)
-      if (currentVideo.isTransit || params.MODE === 'RAW') return
+      // if (currentVideo.isTransit || params.MODE === 'RAW') return
 
       const currentFrameData = videoEnv.frames?.[currentFrameIdx]
       if (!currentFrameData) return
@@ -90,8 +90,8 @@ export class Visualizer extends React.Component<Props, {}> {
       if (!players) return
 
       // // Step1. detect the players to show
-      const focus = params.LV_FOCUS ? videoEnv.fetchFocus() : undefined
-      const { lv1Players, lv2Players } = videoEnv.pickPlayers(currentFrameIdx, focus)
+      const filter_focus = features.gaze_filter ? videoEnv.fetchFocus() : undefined
+      const { lv1Players, lv2Players } = videoEnv.pickPlayers(currentFrameIdx, features, filter_focus)
       if (!lv1Players && !lv2Players) return
 
       // DEBUG.TIMELINE && this.props.onPickPlayers?.(currentFrameIdx, lv1Players, lv2Players)
@@ -100,32 +100,23 @@ export class Visualizer extends React.Component<Props, {}> {
       const dataToVis = players!.filter(p => this.isOnLv2Player(p, lv2Players))
 
       // Step3 Visualization & Render
-      const offensiveRings: VisCircle[] = dataToVis
-        .filter(p => p.dataPkg?.mode === PLAYER_STATUS.offensive)
+
+      const offensiveRings: VisRing[] = dataToVis
+        .filter(p => p.dataPkg?.mode === PLAYER_STATUS.offensive && features.vis_off_ring)
         .map(({ dataPkg, id }) => {
           // console.log('Offensive circle', id, PLAYER_META[id].ln)
           let { smoothRegionExp, inOffsensiveCourt } = dataPkg as OffensivePkg
           const { cx, cy } = this.get2DPos(id, players)
-
-          // @TODO, for training purpose
-          // if (params.UNIT_ID === 'unit0') {
-          //   smoothRegionExp = PLAYER_RANDOM_FACTOR[id] * 2
-          // }
           const fill = videoEnv.scales.regionExp(smoothRegionExp)
           return { cx, cy, fill, size: Math.min(1, smoothRegionExp / 2), inOffsensiveCourt }
         })
 
       const defensiveSheilds: VisSheild[] = dataToVis
-        .filter(p => p.dataPkg?.mode === PLAYER_STATUS.defensive)
+        .filter(p => p.dataPkg?.mode === PLAYER_STATUS.defensive && features.vis_def_sheild)
         .map(({ dataPkg, id }) => {
           let { diff, speed, tangle, tdist, defendingPlayer, smoothDFdiff } = dataPkg as DefensivePkg
           const { cx, cy } = this.get2DPos(id, players)
           const { cx: dx, cy: dy } = this.get2DPos(defendingPlayer, players)
-
-          // @TODO, for training purpose
-          // if (params.UNIT_ID === 'unit0') {
-          //   smoothDFdiff = PLAYER_RANDOM_FACTOR[id]
-          // }
 
           return {
             cx, cy,
@@ -141,12 +132,14 @@ export class Visualizer extends React.Component<Props, {}> {
       // draw.fg(this.layers['2_fg']?.ctx!, this.layers['0_bg']!.canvas, currentFrameData.mask!)
       draw.HL(this.layers['3_annot']?.ctx!, this.layers['0_bg']!.canvas, currentFrameData.mask!,
         players,
+        // 
         players?.filter(p => p.id in lv1Players)
           .map(p => ({ ...p, ...lv1Players[p.id] })),
         players.filter(p => p.id in lv2Players)
           .map(p => ({ ...p, ...lv2Players[p.id] })),
+        features,
         ball?.playerId,
-        focus
+        filter_focus
       )
 
       // 3. text annotations

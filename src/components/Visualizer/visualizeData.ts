@@ -5,8 +5,9 @@ import { PLAYER_META, COLORS, FOCUS, LV_INTEREST_THRESHOLD } from "@const";
 import { PlayerID, KeyPlayer, KeyPlayerType, Lv2Player, Lv2PlayerType, Player } from "@types";
 
 import * as _draw from 'common/@draw'
+import { EnabledFeatures } from 'App';
 
-export interface VisCircle {
+export interface VisRing {
   cx: number,
   cy: number,
   fill: string,
@@ -14,7 +15,7 @@ export interface VisCircle {
   inOffsensiveCourt: boolean
 }
 
-function drawVisCircles(visCtx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, circles: VisCircle[]) {
+function drawVisRings(visCtx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D, circles: VisRing[]) {
   // 0 draw vis circle
   visCtx.save()
   const [a, b, c, d, e, f] = [1.75257350e+00, 5.98341402e-02, -8.91780472e-01, 2.49200452e-01, 0, 0]
@@ -216,109 +217,29 @@ function drawVisSheilds(visCtx: CanvasRenderingContext2D | OffscreenCanvasRender
   visCtx.restore()
 }
 
-
-
-function drawVis(visCtx: CanvasRenderingContext2D, circles: VisCircle[], sheilds: VisSheild[], debugCtx?: CanvasRenderingContext2D) {
-  drawVisCircles(visCtx, circles)
+function drawVis(visCtx: CanvasRenderingContext2D, circles: VisRing[], sheilds: VisSheild[], debugCtx?: CanvasRenderingContext2D) {
+  drawVisRings(visCtx, circles)
   drawVisSheilds(visCtx, sheilds, debugCtx)
 }
 
 
-const internalCanvas = document.createElement('canvas')
-const internalCtx = internalCanvas.getContext('2d')!
-/**
- * Highlight levels:
- * - full brights: all lv1 and lv2 players
- * =========== Focus layer ====== 
- * - glow effect: lv2 interested
- * - spotlight_white: lv1 key players's full bright should be above the focus mask
- * - spotlight_green: lv1 empty players
- */
-function drawHL(ctx: CanvasRenderingContext2D, 
-  frame: CanvasImageSource, 
-  mask: CanvasImageSource,
-  players: Player[],
-  lv1Players: Array<Player & KeyPlayer> = [],
-  lv2Players: Array<Player & Lv2Player> = [],
-  ballHolder?: PlayerID | null,
-  focus?: { pos: Point }) {
-  const { width, height } = ctx.canvas
 
-  const lv2PlayerLooked = lv2Players
-    .filter(p => p.id !== ballHolder &&
-      p.type.has(Lv2PlayerType.Interest) && p.looked && (p.att ?? 0) > LV_INTEREST_THRESHOLD.off)
-  const lv2PlayerNotLooked = lv2Players
-    .filter(p => !(lv2PlayerLooked.find(lp => lp.id === p.id)))
-
-  const unImportantPlayers = players.filter(p => !lv2Players.find(lv2 => lv2.id === p.id) && !lv1Players.find(lv1 => lv1.id === p.id))
-
-  // mask get fg
-  internalCanvas.width = width
-  internalCanvas.height = height
-  internalCtx.save()
-  internalCtx.drawImage(mask, 0, 0)
-  internalCtx.globalCompositeOperation = 'source-in'
-  internalCtx.drawImage(frame, 0, 0)
-  internalCtx.restore()
-
-  // draw fg with mask
-  // ctx.save()
-  ctx.drawImage(internalCanvas, 0, 0)
-  // ctx.globalCompositeOperation = 'source-atop'
-  // ctx.fillStyle = `rgba(0, 0, 0, ${COLORS.FG_MASK_ALPHA})`
-  // ctx.fillRect(0, 0, width, height);
-  // ctx.restore()
-
-  // focus mask
-  if (focus) {
-    const { pos } = focus
-    ctx.save()
-    const grd = ctx.createRadialGradient(pos.x, pos.y, FOCUS.min, pos.x, pos.y, FOCUS.max);
-    grd.addColorStop(0, `rgba(0, 0, 0, ${FOCUS.mina})`);
-    grd.addColorStop(1, `rgba(0, 0, 0, ${FOCUS.maxa})`);
-    ctx.fillStyle = grd;
-    ctx.globalCompositeOperation = 'source-atop'
-    ctx.fillRect(0, 0, width, height);
-    ctx.restore()
-
-    //unimportant players
-    ctx.save()
-    unImportantPlayers.forEach(p => {
-      const { x, y, w, h } = p.bbox
-      ctx.drawImage(internalCtx.canvas,
-        x, y, w, h,
-        x, y, w, h)
-    })
-    ctx.fillStyle = `rgba(0, 0, 0, ${COLORS.FG_MASK_ALPHA})`
-    ctx.globalCompositeOperation = 'source-atop'
-    ctx.fillRect(0, 0, width, height);
-    ctx.restore()
-  }
-
-  // need this for the focus mask
-  // basic hilight, full bright
-  lv2PlayerNotLooked.forEach(player => {
-    const { x, y, w, h } = player.bbox
-    ctx.drawImage(internalCtx.canvas,
-      x, y, w, h,
-      x, y, w, h)
-  })
-
-  // only looked, will show glow
+function drawGlows(ctx: CanvasRenderingContext2D, players: Array<Player & Lv2Player>, savedFG: CanvasRenderingContext2D) {
   ctx.save()
   ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
-  lv2PlayerLooked
+  players
     .forEach(player => {
       const { x, y, w, h } = player.bbox
       ctx.shadowBlur = player.on ? 10 : 40 * (player.att ?? 0 - LV_INTEREST_THRESHOLD.off);
-      ctx.drawImage(internalCtx.canvas,
+      ctx.drawImage(savedFG.canvas,
         x, y, w, h,
         x, y, w, h)
     })
   ctx.restore()
+}
 
-  // spot light 
-  lv1Players
+function drawSpotLights(ctx: CanvasRenderingContext2D, players: Array<Player & KeyPlayer>, savedFG: CanvasRenderingContext2D) {
+  players
     ?.forEach(player => {
       const { progress: frames } = player.last
       const { x, y, w, h } = player.bbox
@@ -329,7 +250,7 @@ function drawHL(ctx: CanvasRenderingContext2D,
           : 20
 
       // full bright image
-      ctx.drawImage(internalCtx.canvas,
+      ctx.drawImage(savedFG.canvas,
         x, y, w, h,
         x, y, w, h)
 
@@ -356,6 +277,97 @@ function drawHL(ctx: CanvasRenderingContext2D,
         }
       )
     })
+}
+
+const internalCanvas = document.createElement('canvas')
+const internalCtx = internalCanvas.getContext('2d')!
+/**
+ * Highlight levels:
+ * - full brights: all lv1 and lv2 players
+ * =========== Focus layer ====== 
+ * - glow effect: lv2 interested
+ * - spotlight_white: lv1 key players's full bright should be above the focus mask
+ * - spotlight_green: lv1 empty players
+ */
+function drawHL(ctx: CanvasRenderingContext2D,
+  frame: CanvasImageSource,
+  mask: CanvasImageSource,
+  players: Player[],
+  lv1Players: Array<Player & KeyPlayer> = [],
+  lv2Players: Array<Player & Lv2Player> = [],
+  features: EnabledFeatures,
+  ballHolder?: PlayerID | null,
+  filter_focus?: { pos: Point }) {
+  const { width, height } = ctx.canvas
+
+  // mask get fg
+  internalCanvas.width = width
+  internalCanvas.height = height
+  internalCtx.save()
+  internalCtx.drawImage(mask, 0, 0)
+  internalCtx.globalCompositeOperation = 'source-in'
+  internalCtx.drawImage(frame, 0, 0)
+  internalCtx.restore()
+
+  // draw fg with mask
+  // ctx.save()
+  ctx.drawImage(internalCanvas, 0, 0)
+  // ctx.globalCompositeOperation = 'source-atop'
+  // ctx.fillStyle = `rgba(0, 0, 0, ${COLORS.FG_MASK_ALPHA})`
+  // ctx.fillRect(0, 0, width, height);
+  // ctx.restore()
+
+  // focus mask
+  if (filter_focus) {
+    const { pos } = filter_focus
+    ctx.save()
+    const grd = ctx.createRadialGradient(pos.x, pos.y, FOCUS.min, pos.x, pos.y, FOCUS.max);
+    grd.addColorStop(0, `rgba(0, 0, 0, ${FOCUS.mina})`);
+    grd.addColorStop(1, `rgba(0, 0, 0, ${FOCUS.maxa})`);
+    ctx.fillStyle = grd;
+    ctx.globalCompositeOperation = 'source-atop'
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore()
+
+    //unimportant players
+    const unImportantPlayers = players.filter(p =>
+      !lv2Players.find(lv2 => lv2.id === p.id) &&
+      !lv1Players.find(lv1 => lv1.id === p.id))
+
+    ctx.save()
+    unImportantPlayers.forEach(p => {
+      const { x, y, w, h } = p.bbox
+      ctx.drawImage(internalCtx.canvas,
+        x, y, w, h,
+        x, y, w, h)
+    })
+    ctx.fillStyle = `rgba(0, 0, 0, ${COLORS.FG_MASK_ALPHA})`
+    ctx.globalCompositeOperation = 'source-atop'
+    ctx.fillRect(0, 0, width, height);
+    ctx.restore()
+  }
+
+  // need this for the focus mask
+  // basic hilight, full bright
+  const lv2PlayerLooked = lv2Players
+    .filter(p => p.id !== ballHolder &&
+      p.type.has(Lv2PlayerType.Interest) && p.looked && (p.att ?? 0) > LV_INTEREST_THRESHOLD.off)
+  const lv2PlayerNotLooked = lv2Players
+    .filter(p => !(lv2PlayerLooked.find(lp => lp.id === p.id)))
+  lv2PlayerNotLooked.forEach(player => {
+    const { x, y, w, h } = player.bbox
+    ctx.drawImage(internalCtx.canvas,
+      x, y, w, h,
+      x, y, w, h)
+  })
+
+  // only looked, will show glow
+  drawGlows(ctx, lv2PlayerLooked, internalCtx)
+
+  // spot light 
+  if (features.vis_key_player) {
+    drawSpotLights(ctx, lv1Players, internalCtx)
+  }
 }
 
 /**
@@ -479,7 +491,7 @@ function drawName(ctx: CanvasRenderingContext2D, player?: Player) {
 export {
   // drawFG as fg,
 
-  drawVisCircles as circles,
+  drawVisRings as circles,
   drawVisSheilds as sheilds,
   drawHL as HL,
   drawVis as Vis,
