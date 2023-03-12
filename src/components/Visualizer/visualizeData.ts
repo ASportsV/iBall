@@ -341,9 +341,9 @@ function drawHL(ctx: CanvasRenderingContext2D,
         x, y, w, h,
         x, y, w, h)
     })
-    ctx.fillStyle = `rgba(0, 0, 0, ${COLORS.FG_MASK_ALPHA})`
-    ctx.globalCompositeOperation = 'source-atop'
-    ctx.fillRect(0, 0, width, height);
+    // ctx.fillStyle = `rgba(0, 0, 0, ${COLORS.FG_MASK_ALPHA})`
+    // ctx.globalCompositeOperation = 'source-atop'
+    // ctx.fillRect(0, 0, width, height);
     ctx.restore()
   }
 
