@@ -232,3 +232,34 @@ $bbottom-height: 32px;
     }
   }
 }
+
+.playerPanel {
+  position: fixed;
+  width: 200px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 100;
+  right: 20px;
+  top: 340px;
+
+  .btn-group {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 8px;
+  }
+
+  .gridContainer {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 8px;
+    row-gap: 8px;
+  }
+
+  .gridItem {
+    input {
+      margin-right: 4px;
+      accent-color: #19ab27;
+    }
+  }
+}

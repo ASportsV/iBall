@@ -288,6 +288,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
   #getPlayerTeam = (playerId?: PlayerID) => playerId ? PLAYER_META[playerId].team : undefined
   pickPlayers(currentFIdx: number,
     features: EnabledFeatures,
+    playerFlags: Partial<Record<PlayerID, 'Auto' | 'On' | 'Off'>>,
     filter_center?: { pos: Point; }
   ) {
 
@@ -327,6 +328,14 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
         type: new Set([Lv2PlayerType.Normal])
       }))
     }
+
+    // do playerFlags for Lv1 player
+    Object.entries(playerFlags)
+      .forEach(([pId, v]) => {
+        if (v === 'On') {
+          currentlv1Players.push({ id: +pId as PlayerID, type: KeyPlayerType.BALL_HOLDER })
+        }
+      })
 
     // who will get the ball in the next Xsec
     const nextBallHolder = this.getNextBallHolder(currentFIdx, NEXT_BALL_HOLDER_TIME_RANGE, ball)
@@ -414,12 +423,18 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
 
     // Step2 find the interested players, gaze_focus, default to open
     if (features.gaze_focus) {
-
       Object.entries(playerAttentions)
         .forEach(([pId, { att, on, looked }]) => {
           lv2Players.push({ id: +pId as PlayerID, att, on, looked, type: new Set([Lv2PlayerType.Interest]) })
         })
     }
+    // do playerFlags for Lv2 player
+    Object.entries(playerFlags)
+      .forEach(([pId, v]) => {
+        if (v === 'On') {
+          lv2Players.push({ id: +pId as PlayerID, type: new Set([Lv2PlayerType.Normal]) })
+        }
+      })
 
     // cache the keyplayers
     this.#keyPlayers.unshift({
@@ -429,25 +444,29 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
     })
 
     return {
-      lv1Players: lv1Players.reduce((o, p) => {
-        if (!(p.id in o)) {
-          o[p.id] = p
-        }
-        // use the higher rank
-        if (p.type < o[p.id].type) {
-          o[p.id].type = p.type
-        }
+      lv1Players: lv1Players
+        .filter(p => playerFlags[p.id] !== 'Off')
+        .reduce((o, p) => {
+          if (!(p.id in o)) {
+            o[p.id] = p
+          }
+          // use the higher rank
+          if (p.type < o[p.id].type) {
+            o[p.id].type = p.type
+          }
 
-        return o
-      }, {} as Record<PlayerID, KeyPlayer>),
+          return o
+        }, {} as Record<PlayerID, KeyPlayer>),
       //
-      lv2Players: lv2Players.reduce((o, p) => {
-        if (!(p.id in o)) o[p.id] = p
-        else {
-          o[p.id] = { ...o[p.id], ...p, type: union(p.type, o[p.id].type) }
-        }
-        return o
-      }, {} as Record<PlayerID, Lv2Player>),
+      lv2Players: lv2Players
+        .filter(p => playerFlags[p.id] !== 'Off')
+        .reduce((o, p) => {
+          if (!(p.id in o)) o[p.id] = p
+          else {
+            o[p.id] = { ...o[p.id], ...p, type: union(p.type, o[p.id].type) }
+          }
+          return o
+        }, {} as Record<PlayerID, Lv2Player>),
       teamWithBall,
       ballHolder: players?.find(p => p.id === ball?.playerId)
     }

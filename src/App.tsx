@@ -13,6 +13,7 @@ import type {
   PlayerID, Player,
   VideoID, Video
 } from '@types'
+import { PLAYER_META } from '@const'
 
 import { DEBUG } from 'common/@const'
 import { standardDeviation, globalFIdxToLocal, localFIdxToGlobalFIdx } from "common/@utils";
@@ -40,8 +41,6 @@ const enabledFeatures = {
   vis_top_view: true,
   gaze_focus: true,
   gaze_filter: false,
-  onPlayers: [] as PlayerID[],
-  offPlayers: [] as PlayerID[]
 }
 export type EnabledFeatures = typeof enabledFeatures
 
@@ -60,6 +59,7 @@ interface State {
 
   // enable features:
   features: EnabledFeatures
+  playerFlag: Partial<Record<PlayerID, 'Auto' | 'On' | 'Off'>>
 
   playing: boolean
 }
@@ -80,6 +80,7 @@ export class App extends React.Component<{}, State> {
     pickedPlayers: {},
     //
     features: enabledFeatures,
+    playerFlag: {},
     //
     playing: false,
   }
@@ -170,6 +171,20 @@ export class App extends React.Component<{}, State> {
     await videoEnv.fetchVideos()
     // preload videos
     await videoEnv.loadVideo(videos[currentVideoIdx])
+
+
+    // check players
+    this.setState({
+      playerFlag: Array.from(new Set(
+        Object.values(videoEnv.frames ?? {}).flatMap(f => f.players?.map(p => p.id))
+      ))
+        .reduce((o, pId) => {
+          if (pId) {
+            o[pId] = 'Auto'
+          }
+          return o
+        }, {} as Partial<Record<PlayerID, 'Auto'>>)
+    })
   }
 
   componentWillUnmount() {
@@ -265,12 +280,51 @@ export class App extends React.Component<{}, State> {
     </div>
   }
 
+  renderPlayerToggle() {
+    const { playerFlag } = this.state
+    return <div className="playerPanel">
+      <h4 style={{ textAlign: 'center' }}>Players</h4>
+      <div className="btn-group">
+        {['Auto', 'On', 'Off'].map(v => <button onClick={() => {
+          Object.keys(playerFlag)
+            .forEach(pId => {
+              playerFlag[+pId as PlayerID] = v as 'Auto' | 'On' | 'Off'
+            })
+          this.setState({ playerFlag: { ...playerFlag } })
+        }}>{v} All</button>)}
+      </div>
+      <div className="gridContainer">
+        {Object.entries(playerFlag)
+          .map(([pId, v]) => {
+            return <>
+              <span className="gridItem">
+                {PLAYER_META[+pId as PlayerID].ln}
+              </span>
+              <label className="gridItem">
+                <select name="pflag" id="pflag" value={v}
+                  onChange={e => {
+                    playerFlag[+pId as PlayerID] = e.target.value as 'Auto' | 'On' | 'Off'
+                    this.setState({ playerFlag: { ...playerFlag } })
+                  }}
+                >
+                  {['Auto', 'On', 'Off'].map(value =>
+                    <option value={value}>{value}</option>
+                  )}
+                </select>
+              </label>
+            </>
+          })}
+      </div>
+    </div>
+  }
+
   render() {
     const {
       currentVideoIdx,
       currentFrameIdx,
 
       features,
+      playerFlag,
 
       currentGaze,
       currentFrame,
@@ -291,10 +345,11 @@ export class App extends React.Component<{}, State> {
         {this.renderProgressbar()}
 
         {this.renderToggle()}
+        {this.renderPlayerToggle()}
 
-            {features.vis_top_view && <Court
-              currentFrameData={currentFrameData}
-            />}
+        {features.vis_top_view && <Court
+          currentFrameData={currentFrameData}
+        />}
         <div className="up">
           <div className="full">
             <Visualizer ref={this.#visualizer}
@@ -304,6 +359,7 @@ export class App extends React.Component<{}, State> {
               currentFrame={currentFrame}
               // feature
               features={features}
+              playerFlags={playerFlag}
               // gaze
               gaze={currentGaze}
               gazePlayers={gazePlayers}
