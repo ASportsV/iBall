@@ -38,6 +38,7 @@ interface Props {
   gazePlayers?: Player[]
 
   features: EnabledFeatures
+  playerFlags: Partial<Record<PlayerID, 'Auto' | 'On' | 'Off'>>
 
   onPickPlayers?: (fIdx: number, lv1Players: Record<PlayerID, KeyPlayer>, lv2Players: Record<PlayerID, Lv2Player>) => void
 }
@@ -74,7 +75,8 @@ export class Visualizer extends React.Component<Props, {}> {
       const {
         currentFrameIdx,
         currentFrame,
-        features
+        features,
+        playerFlags
       } = this.props
       if (!currentFrame) return
 
@@ -92,7 +94,7 @@ export class Visualizer extends React.Component<Props, {}> {
 
       // // Step1. detect the players to show
       const filter_focus = features.gaze_filter ? videoEnv.fetchFocus() : undefined
-      const { lv1Players, lv2Players } = videoEnv.pickPlayers(currentFrameIdx, features, filter_focus)
+      const { lv1Players, lv2Players } = videoEnv.pickPlayers(currentFrameIdx, features, playerFlags, filter_focus)
       if (!lv1Players && !lv2Players) return
 
       // DEBUG.TIMELINE && this.props.onPickPlayers?.(currentFrameIdx, lv1Players, lv2Players)
@@ -161,8 +163,8 @@ export class Visualizer extends React.Component<Props, {}> {
     return (<div className='visualizationContainer'
 
       style={{
-        marginLeft: '30px',
-        justifyContent: 'center' //DEBUG ? 'flex-start' : 'center'
+        marginLeft: '20px',
+        // justifyContent: 'center' //DEBUG ? 'flex-start' : 'center'
       }}
     >
       <div id="canvasWrapper" className="canvasWrapper">
