@@ -14,19 +14,19 @@ export class Parameters {
     constructor(
         public readonly GAME_ID: GameID = 'game1',
         public readonly UNIT_ID: UnitID = 'unit0',
-        public readonly MODE: 'AUG' | 'FULL' | 'RAW' = 'FULL',
-        public readonly LV_FOCUS: boolean = MODE === 'FULL',
-        public readonly LV_INTRE: boolean = MODE === 'FULL'
+        // public readonly MODE: 'AUG' | 'FULL' | 'RAW' = 'FULL',
+        // public readonly LV_FOCUS: boolean = MODE === 'FULL',
+        // public readonly LV_INTRE: boolean = MODE === 'FULL'
     ) {
         console.log(global.location.search)
         console.debug(`%cParams:
     GAME_ID: ${GAME_ID},
     UNIT_ID: ${UNIT_ID},
-    MODE: ${MODE},
-    LV_FOCUS: ${LV_FOCUS},
-    LV_INTRE: ${LV_INTRE}
-`, 'background: #444; color: #bada55; padding: 2px; border-radius:2px')
-    }
+    `, 'background: #444; color: #bada55; padding: 2px; border-radius:2px')
+}
+// MODE: ${MODE},
+// LV_FOCUS: ${LV_FOCUS},
+// LV_INTRE: ${LV_INTRE}
 }
 
 function initParams() {
@@ -48,7 +48,7 @@ function initParams() {
         alert('UnitId must be unit0, unit1, or unit2')
     }
 
-    let mode: 'AUG' | 'FULL' | 'RAW' = 'AUG'
+    let mode: 'AUG' | 'FULL' | 'RAW' = 'FULL'
     if(params.get('m') !== null) {
         mode =  params.get('m')!.toUpperCase() as 'AUG' | 'FULL' | 'RAW'
     }
@@ -66,7 +66,7 @@ function initParams() {
         lvInt = params.get('gi') === 'true'
     }
 
-    return new Parameters(gameId, unitId, mode, lvFocus, lvInt)
+    return new Parameters(gameId, unitId) //, mode, lvFocus, lvInt)
 }
 
 export const params = initParams()
