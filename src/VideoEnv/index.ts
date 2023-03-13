@@ -459,7 +459,7 @@ export class IBallVideoEnv extends VideoEnv<GameID, VideoID, PlayerID> {
         }, {} as Record<PlayerID, KeyPlayer>),
       //
       lv2Players: lv2Players
-        .filter(p => playerFlags[p.id] !== 'Off')
+        .filter(p => playerFlags[p.id] !== 'Off' || p.type.has(Lv2PlayerType.Interest))
         .reduce((o, p) => {
           if (!(p.id in o)) o[p.id] = p
           else {
