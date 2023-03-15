@@ -2,6 +2,7 @@
 
 - **An interactive basketball game watching system.**
 - **A web-based testbed for embedded visualization research.**
+- **[🌟 Live Demo 🌟](https://asportsv.github.io/iBall/)  (only works on Desktop Chrome / Edge)**
 
 ![fig_dataVis](https://user-images.githubusercontent.com/3315274/224772074-8a41c5e8-f811-41a0-998d-0b558d65c8df.jpg)
 
