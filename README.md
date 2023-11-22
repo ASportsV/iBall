@@ -9,7 +9,7 @@
 
 > [**iBall: Augmenting Basketball Videos with Gaze-moderated Embedded Visualizations**](http://128.84.21.203/abs/2303.03476)
 > 
-> Zhutian Chen, Qisen Yang, Jiarui Shan, Tica Lin, Johanna Beyer, Haijun Xia, and Hanspeter Pfister
+> Chen Zhu-Tian, Qisen Yang, Jiarui Shan, Tica Lin, Johanna Beyer, Haijun Xia, and Hanspeter Pfister
 > 
 > _ACM Conference on Human Factors in Computing Systems, 2023_
 >
@@ -37,7 +37,7 @@ We present iBall, a basketball video-watching system that leverages gaze-moderat
 ```
 @CONFERENCE {chen2023iball,
     title={iBall: Augmenting Basketball Videos with Gaze-moderated Embedded Visualizations},
-    author={Zhutian Chen and Qisen Yang and Jiarui Shan and Tica Lin and Johanna Beyer and Haijun Xia and Hanspeter Pfister},
+    author={Chen Zhu-Tian and Qisen Yang and Jiarui Shan and Tica Lin and Johanna Beyer and Haijun Xia and Hanspeter Pfister},
     booktitle={Proceedings of the CHI Conference on Human Factors in Computing Systems},
     year={2023},
     month={apr},
