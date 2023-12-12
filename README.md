@@ -13,7 +13,7 @@
 > 
 > _ACM Conference on Human Factors in Computing Systems, 2023_
 >
-> [[Paper](http://128.84.21.203/abs/2303.03476) | [Demo](https://asportsv.github.io/iBall/) | [Video](https://vimeo.com/805270302)]
+> [[Paper](http://128.84.21.203/abs/2303.03476) | [Demo](https://asportsv.github.io/iBall/) | [Video](https://youtu.be/BjdByJ5BgxI)]
 
 
 ## Abstract
